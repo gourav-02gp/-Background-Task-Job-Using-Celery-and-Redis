@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  worker:
+    build: .
+    depends_on:
+      - redis
+
+  flower:
+    image: mher/flower
+    command: >
+      celery --broker=redis://redis:6379/0 flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
